@@ -31,7 +31,7 @@ from random import randrange
 
 #Calcule et dessine le nouveau tableau
 def tableau():
-    calculer()
+    # calculer()
     draw()
     window.after(1, tableau)
 
@@ -127,8 +127,10 @@ def draw():
 ########## - MAIN - ##########
             
 #Définitions des variables
-hauteur = int(input("Entrez le nombre de cellules à la verticale : ")) #Hauteur du tableau (fait donc varier le nombre de cellules à la verticale, plus il y en a, plus c'est lent)
-largeur = int(input("Entrez le nombre de cellules à l'horizontale : ")) #Largeur du tableau (fait donc varier le nombre de cellules à l'horizontale, plus il y en a, plus c'est lent)
+# hauteur = int(input("Entrez le nombre de cellules à la verticale : ")) #Hauteur du tableau (fait donc varier le nombre de cellules à la verticale, plus il y en a, plus c'est lent)
+# largeur = int(input("Entrez le nombre de cellules à l'horizontale : ")) #Largeur du tableau (fait donc varier le nombre de cellules à l'horizontale, plus il y en a, plus c'est lent)
+hauteur = 50
+largeur = 50
 cote = 10  #Taille d'une cellule (fixe, car il ne sert à rien de la modifier)
 vivant = 1 #L'état vivant est définit à 1 (comme le binaire, en "True")
 mort = 0    #L'état mort est définit à 0 (comme en binaire, en "False")
