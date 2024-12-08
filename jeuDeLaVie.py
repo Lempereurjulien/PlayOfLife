@@ -28,6 +28,10 @@ from tkinter import *
 from random import randrange
 
 ########## - FONCTIONS ET PROCEDURES - ##########
+NEGATIF = 3
+POSITIF = 2  # L'état vivant est définit à 1 (comme le binaire, en "True")
+NEUTRE = 1  # L'état mort est définit à 0 (comme en binaire, en "False")
+AUCUN = 0
 
 #Calcule et dessine le nouveau tableau
 def tableau():
@@ -40,13 +44,19 @@ def initialisation():
     for y in range(hauteur):
         for x in range(largeur):
             #on met les cellules mortes d'abord, et la variable temporaire à morte aussi.
-            state[x][y] = mort
-            temp[x][y] = mort
+            state[x][y] = AUCUN
+            temp[x][y] = AUCUN
             cellule[x][y] = canvas.create_rectangle((x*cote, y*cote,(x+1)*cote, (y+1)*cote), outline="gray", fill="white") #création des rectangles blancs
 
     #On placeau hasard environ 25% de cellules en vie (permet d'éviter qu'il n'y aie qu'1 seule cellule, et donc de ne rien produire)
-    for i in range(largeur*hauteur//4):
-        state[randrange(largeur)][randrange(hauteur)] = vivant
+    for i in range(1):
+        state[randrange(largeur)][randrange(hauteur)] = NEGATIF
+
+    for i in range(1):
+        state[randrange(largeur)][randrange(hauteur)] = POSITIF
+
+    for i in range(8):
+        state[randrange(largeur)][randrange(hauteur)] = NEUTRE
 
 #On applique les règles
 def calculer():
@@ -55,20 +65,20 @@ def calculer():
             nombre_voisins = compte_voisins(x,y) #on appelle la fonction permettant de connaître le nombre de voisins
             
             #Règle 1 - Mort d'isolement
-            if state[x][y] == vivant and nombre_voisins < 2: #Si la cellule est vivante et qu'elle a un nombre de voisins inférieur à deux
-                temp[x][y] = mort #alors elle meurt
+            if state[x][y] == POSITIF and nombre_voisins < 2: #Si la cellule est vivante et qu'elle a un nombre de voisins inférieur à deux
+                temp[x][y] = NEUTRE #alors elle meurt
             
             #Règle 2 - Toute cellule avec 2 ou 3 voisins survit.
-            if state[x][y] == vivant and (nombre_voisins == 2 or nombre_voisins == 3): #Si une cellule est vivante et qu'elle a deux ou trois voisins
-                temp[x][y] = vivant #alors elle reste en vie
+            if state[x][y] == POSITIF and (nombre_voisins == 2 or nombre_voisins == 3): #Si une cellule est vivante et qu'elle a deux ou trois voisins
+                temp[x][y] = POSITIF #alors elle reste en vie
             
             #Règle 3 - Mort par surpopulation
-            if state[x][y] == vivant and nombre_voisins > 3: #si une cellule est vivante et qu'elle a plus de trois voisins
-                temp[x][y] = mort #alors elle meurt
+            if state[x][y] == POSITIF and nombre_voisins > 3: #si une cellule est vivante et qu'elle a plus de trois voisins
+                temp[x][y] = NEUTRE #alors elle meurt
             
             #Règle 4 - Naissance
-            if state[x][y] == mort and nombre_voisins == 3: #si une cellule est morte et qu'elle a trois voisins
-                temp[x][y] = vivant #alors elle nait (son état est à vivant)
+            if state[x][y] == NEUTRE and nombre_voisins == 3: #si une cellule est morte et qu'elle a trois voisins
+                temp[x][y] = POSITIF #alors elle nait (son état est à vivant)
         
     for y in range(hauteur):
         for x in range(largeur):
@@ -116,29 +126,34 @@ def compte_voisins(x,y):
 
 #On dessine toute les cellules
 def draw():
+    couleur = "white"
     for y in range(hauteur):
         for x in range(largeur):
-            if state[x][y]==0: #si l'état est à 0 (donc cellule morte)
-                couleur = "white" #on met la couleur blanche
-            else: #sinon elle est vivante
-                couleur = "black" #donc on met la couleur noire
+            match state[x][y]:
+                case 0:
+                    couleur = "white"
+                case 1:
+                    couleur = "black"
+                case 2:
+                    couleur = "green"
+                case 3:
+                    couleur = "red"
             canvas.itemconfig(cellule[x][y], fill=couleur) #application du changement de couleur
 
 ########## - MAIN - ##########
-            
+
 #Définitions des variables
 # hauteur = int(input("Entrez le nombre de cellules à la verticale : ")) #Hauteur du tableau (fait donc varier le nombre de cellules à la verticale, plus il y en a, plus c'est lent)
 # largeur = int(input("Entrez le nombre de cellules à l'horizontale : ")) #Largeur du tableau (fait donc varier le nombre de cellules à l'horizontale, plus il y en a, plus c'est lent)
 hauteur = 50
 largeur = 50
 cote = 10  #Taille d'une cellule (fixe, car il ne sert à rien de la modifier)
-vivant = 1 #L'état vivant est définit à 1 (comme le binaire, en "True")
-mort = 0    #L'état mort est définit à 0 (comme en binaire, en "False")
+
 
 #Créer les matrices
 cellule = [[0 for row in range(hauteur)] for col in range(largeur)] #utilisation des raccourcis python (non obligatoire mais pratique)
-state = [[mort for row in range(hauteur)] for col in range(largeur)]
-temp = [[mort for row in range(hauteur)] for col in range(largeur)]
+state = [[NEUTRE for row in range(hauteur)] for col in range(largeur)]
+temp = [[NEUTRE for row in range(hauteur)] for col in range(largeur)]
 
 
 #Rassemblement des fonctions et procédures pour faire le programme
