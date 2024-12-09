@@ -50,13 +50,13 @@ def initialisation():
             cellule[x][y] = canvas.create_rectangle((x*cote, y*cote,(x+1)*cote, (y+1)*cote), outline="gray", fill="white") #création des rectangles blancs
 
     #On placeau hasard environ 25% de cellules en vie (permet d'éviter qu'il n'y aie qu'1 seule cellule, et donc de ne rien produire)
-    # for i in range(1):
-    #     state[randrange(largeur)][randrange(hauteur)] = NEGATIF
+    for i in range(4):
+        state[randrange(largeur)][randrange(hauteur)] = NEGATIF
 
-    # for i in range(1):
-    #     state[randrange(largeur)][randrange(hauteur)] = POSITIF
+    for i in range(4):
+        state[randrange(largeur)][randrange(hauteur)] = POSITIF
 
-    for i in range(1):
+    for i in range(4):
         state[randrange(largeur)][randrange(hauteur)] = NEUTRE
 
 
@@ -65,23 +65,23 @@ def calculer():
     for y in range(hauteur):
         for x in range(largeur):
             direction = random.randint(1,4)#Droite
-            if state[x][y] == NEUTRE:
+            if state[x][y] != AUCUN:
                 match direction:
                     case 1:
                         #Droite
                         if x < largeur-1:
-                            state[x+1][y] = NEUTRE
+                            state[x+1][y] = state[x][y]
                             state[x][y]=AUCUN
                     case 2:
                         if y < hauteur-1:
-                            state[x][y+1] = NEUTRE
+                            state[x][y+1] = state[x][y]
                             state[x][y] = AUCUN
                     case 3:
                         # Gauche
-                        state[x-1][y] = NEUTRE
+                        state[x-1][y] = state[x][y]
                         state[x][y] = AUCUN
                     case 4:
-                        state[x][y-1] = NEUTRE
+                        state[x][y-1] = state[x][y]
                         state[x][y] = AUCUN
                 
 
