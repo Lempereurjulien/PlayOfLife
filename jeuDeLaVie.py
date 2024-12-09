@@ -7,7 +7,7 @@ Néanmoins, afin de ne pas etre limité par le cadre, j'utilise ici
 un tableau torique. Cela permet par exemple qu'une structure mouvante partant vers l'extreme
 droite se retrouvera à gauche pour continuer son mouvement (idéal pour étudier les planeurs)
 
-On a donc les entrées de la hauteur et de la largeur au début 
+On a donc les entrées de la hauteur et de la largeur au début
 
 Une fois les valeurs entrées, on a donc l'interface qui montre la table avec les cellules mortes et vivantes évoluant dans l'environnement.
 On pourra avoir plusieurs résultats comme des structures stables (un carré de 2x2 cellules) ou instables (comme le clignotant ou le planeur,
@@ -25,6 +25,7 @@ principale où l'on trouve les appels de fonctions.
 
 #Importations de tkinter pour l'interface et de random (ici on veut juste randrange) pour l'aléatoire
 from tkinter import *
+import random
 from random import randrange
 
 ########## - FONCTIONS ET PROCEDURES - ##########
@@ -35,7 +36,7 @@ AUCUN = 0
 
 #Calcule et dessine le nouveau tableau
 def tableau():
-    # calculer()
+    calculer()
     draw()
     window.after(1, tableau)
 
@@ -49,40 +50,90 @@ def initialisation():
             cellule[x][y] = canvas.create_rectangle((x*cote, y*cote,(x+1)*cote, (y+1)*cote), outline="gray", fill="white") #création des rectangles blancs
 
     #On placeau hasard environ 25% de cellules en vie (permet d'éviter qu'il n'y aie qu'1 seule cellule, et donc de ne rien produire)
-    for i in range(1):
-        state[randrange(largeur)][randrange(hauteur)] = NEGATIF
+    # for i in range(1):
+    #     state[randrange(largeur)][randrange(hauteur)] = NEGATIF
+
+    # for i in range(1):
+    #     state[randrange(largeur)][randrange(hauteur)] = POSITIF
 
     for i in range(1):
-        state[randrange(largeur)][randrange(hauteur)] = POSITIF
-
-    for i in range(8):
         state[randrange(largeur)][randrange(hauteur)] = NEUTRE
+
 
 #On applique les règles
 def calculer():
     for y in range(hauteur):
         for x in range(largeur):
-            nombre_voisins = compte_voisins(x,y) #on appelle la fonction permettant de connaître le nombre de voisins
-            
-            #Règle 1 - Mort d'isolement
-            if state[x][y] == POSITIF and nombre_voisins < 2: #Si la cellule est vivante et qu'elle a un nombre de voisins inférieur à deux
-                temp[x][y] = NEUTRE #alors elle meurt
-            
-            #Règle 2 - Toute cellule avec 2 ou 3 voisins survit.
-            if state[x][y] == POSITIF and (nombre_voisins == 2 or nombre_voisins == 3): #Si une cellule est vivante et qu'elle a deux ou trois voisins
-                temp[x][y] = POSITIF #alors elle reste en vie
-            
-            #Règle 3 - Mort par surpopulation
-            if state[x][y] == POSITIF and nombre_voisins > 3: #si une cellule est vivante et qu'elle a plus de trois voisins
-                temp[x][y] = NEUTRE #alors elle meurt
-            
-            #Règle 4 - Naissance
-            if state[x][y] == NEUTRE and nombre_voisins == 3: #si une cellule est morte et qu'elle a trois voisins
-                temp[x][y] = POSITIF #alors elle nait (son état est à vivant)
-        
-    for y in range(hauteur):
-        for x in range(largeur):
-            state[x][y] = temp[x][y] #l'état prend la valeur de la variable temporaire, définis par les tests des quatre règles ci-dessus
+            direction = random.randint(1,4)#Droite
+            if state[x][y] == NEUTRE:
+                match direction:
+                    case 1:
+                        #Droite
+                        if x < largeur-1:
+                            state[x+1][y] = NEUTRE
+                            state[x][y]=AUCUN
+                    case 2:
+                        if y < hauteur-1:
+                            state[x][y+1] = NEUTRE
+                            state[x][y] = AUCUN
+                    case 3:
+                        # Gauche
+                        state[x-1][y] = NEUTRE
+                        state[x][y] = AUCUN
+                    case 4:
+                        state[x][y-1] = NEUTRE
+                        state[x][y] = AUCUN
+                
+
+
+    # # BAS
+    # state[1][1] = POSITIF
+    # state[1][0] = AUCUN
+
+    # #Déplacement à gauche
+    # state[0][1] = NEGATIF
+    # state[1][1] = AUCUN
+
+    # # Deplacement HAUT
+    # state[0][0] = NEGATIF
+    # state[0][1] = AUCUN
+
+    # for y in range(hauteur):
+    #     for x in range(largeur):
+    #         deplacementValue =random.randint(1,4) #on appelle la fonction permettant de connaître le nombre de voisins
+    #         DROITE = 1
+    #         BAS = 2
+    #         GAUCHE = 3
+    #         HAUT = 4
+    #         state[x-1][y] = AUCUN
+    #         temp[x][y] = POSITIF
+            # match 1:
+            #     case 1:
+            #         state[x-1][y] = AUCUN
+            #         temp[x][y] = POSITIF
+            #     case 2:
+            #         state[x][y-1] = AUCUN
+            #         temp[x][y] = POSITIF
+                # case 3:
+                #     if(state[x+1]):
+                #         state[x+1][y] = AUCUN
+                #         temp[x][y] = POSITIF
+                # case 4:
+                #     state[x][y+1] = AUCUN
+                #     temp[x][y] = POSITIF
+
+            # if state[x-1][y] == POSITIF:
+            #     state[x][y] = AUCUN
+            # else:
+            #     state[x][y] == POSITIF
+
+
+    # for y in range(hauteur):
+    #     for x in range(largeur):
+    #         if state[(x - 1) % largeur][(y) % hauteur] == 1:
+    #             state[x][y] = temp[x][y] #l'état prend la valeur de la variable temporaire, définis par les tests des quatre règles ci-dessus
+
+
 
 #On compte les voisins en vie (tableau torique, voir plus haut)
 def compte_voisins(x,y):
@@ -121,7 +172,7 @@ def compte_voisins(x,y):
     #diagonale bas-droite
     if state[(x+1)%largeur][(y-1)%hauteur] == 1:
         nombre_voisins += 1
-        
+
     return nombre_voisins #on retourne la valeur du nombre de voisins
 
 #On dessine toute les cellules
